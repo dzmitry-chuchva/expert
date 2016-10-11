@@ -1,0 +1,29 @@
+Testsuite: by.bsuir.iit.kp.expert.test.AllTests
+Tests run: 26, Failures: 0, Errors: 0, Time elapsed: 0,172 sec
+
+Testcase: testGrammar1 took 0,141 sec
+Testcase: testArithmeticEvalExecute took 0,016 sec
+Testcase: testArithmeticEvalCheck took 0 sec
+Testcase: testArithmeticEvalExecuteErrors took 0 sec
+Testcase: testArithmeticEvalCheckErrors took 0 sec
+Testcase: testLogicalEvalExecute took 0 sec
+Testcase: testLogicalEvalCheck took 0,015 sec
+Testcase: testLogicalEvalExecuteErrors took 0 sec
+Testcase: testLogicalEvalCheckErrors took 0 sec
+Testcase: testUIFactory took 0 sec
+Testcase: testRulesFactory took 0 sec
+Testcase: testStatementsFactory took 0 sec
+Testcase: testArithmeticFactory took 0 sec
+Testcase: testLogicalFactory took 0 sec
+Testcase: testGetDefaultValue took 0 sec
+Testcase: testGetValue took 0 sec
+Testcase: testSetDefaultValue took 0 sec
+Testcase: testSetValue took 0 sec
+Testcase: testSetConstraints took 0 sec
+Testcase: testReset took 0 sec
+Testcase: testConstraints took 0 sec
+Testcase: testConstraintsBooleanDouble took 0 sec
+Testcase: testConstraintsDoubleDouble took 0 sec
+Testcase: testSetMaximum took 0 sec
+Testcase: testSetMinimum took 0 sec
+Testcase: testSatisfies took 0 sec

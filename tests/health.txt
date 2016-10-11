@@ -1,0 +1,61 @@
+number attribute age "age of employee" from 10 to 90
+number attribute height "height of employee" from 0 to 250
+number attribute weight "weight of employee" from 0 to 200
+
+symbol attribute gender "employee's gender"
+	value male assertion name gm
+	value female assertion name gf
+	
+symbol attribute body
+	value thick assertion name body_thick
+	value normal assertion name body_norm
+	value thin assertion name body_thin
+	
+symbol attribute age_category
+	value teenagers assertion name acteens
+	value middle assertion name acmiddle
+	value old assertion name acold
+	
+symbol attribute health
+	value good assertion name hg
+	value soso assertion name hs
+	value bad assertion name hb
+
+rule Q_age target age "Enter age of employee:"
+rule Q_height target height "Enter height of employee in cm:"
+rule Q_weight target weight "Enter weight of employee in kg:"
+
+rule A_gender target gender "Specify employee's gender:"
+
+rule N_body_thick_1 target body_thick if gm "-(height - weight - 100)*0.01"
+rule N_body_thick_2 target body_thick if gf "-(height - weight - 100)*0.04"
+
+rule N_body_norm_1 target body_norm if gm "1-abs(height - weight - 100)/15"
+rule N_body_norm_2 target body_norm if gf "1-abs(height - weight - 100)/10"
+
+rule N_body_thin_1 target body_thin if gm "(height - weight - 100)*0.01"
+rule N_body_thin_2 target body_thin if gf "(height - weight - 100)*0.04"
+
+rule L_acteens_1 target acteens if (gm & (age < 20)) | (gf & (age < 25))
+rule N_acteens_2 target acteens if gm "1 - abs((age - 20)/20)"
+rule N_acteens_3 target acteens if gf "1 - abs((age - 25)/25)"
+
+rule L_acold_1 target acold if (gm & (age > 60)) | (gf & (age > 70))
+rule N_acold_2 target acold if gm "1 - abs((age - 60)/20)"
+rule N_acold_3 target acold if gf "1 - abs((age - 70)/25)"
+
+rule N_acmiddle_1 target acmiddle if gm "1 - abs((age - 40)/20)"
+rule N_acmiddle_2 target acmiddle if gf "1 - abs((age - 47)/25)"
+
+rule L_hg_1 target hg if body_norm & !acold
+rule L_hg_2 target hg if body_norm "0.7"
+rule L_hg_3 target hg if acteens | acmiddle "0.3"
+
+rule L_hb_1 target hb if body_thick & !acteens
+rule L_hb_2 target hb if body_thick "0.6"
+rule L_hb_3 target hb if acold | acmiddle "0.3"
+
+rule N_hs_1 target hs "(hg + hb)/2"
+
+1: eval health;
+2: print "Health of employee is %n with probability %v",health;

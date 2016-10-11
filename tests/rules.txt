@@ -1,0 +1,44 @@
+number attribute age
+number attribute weight
+number attribute height
+
+number attribute body_index
+
+symbol attribute gender
+	value male assertion name male
+	value female assertion name female
+	
+symbol attribute health
+	value good assertion name good_health
+	value bad assertion name bad_health
+	
+symbol attribute distrib_test
+	value one
+	value two
+	value three
+	
+symbol attribute repeat
+	value yes assertion name do_again
+	value no
+	
+rule Q_age target age "Enter your age:"
+rule Q_weight target weight "Enter your weight in kilos:"
+rule Q_height target height "Enter your height in cm:"
+rule N_test_pre_alternate_eval target male "0.5"
+rule A_gender target gender "Specify your gender:"
+rule L_health_good target good_health if (age < 40 & abs(height - 100 - weight) < 10)
+rule L_health_bad target bad_health if good_health
+rule N_body_index target body_index "weight / (height * height / 10000)"
+rule D_distrib_test target distrib_test
+rule A_again target repeat "Run Again?"
+
+1: eval health, gender, body_index, distrib_test;
+2: print "You health is good" if good_health;
+22: print "You index of body is %v",body_index;
+222: print "You gender is %n",0.1,gender;
+3: print "%g is %v",distrib_test;
+4: eval repeat;
+5: goto 8 if !do_again;
+6: reset;
+7: goto 1;
+8: stop;

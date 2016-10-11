@@ -1,0 +1,5 @@
+number attribute age
+
+rule Q_age target age "Enter employees age:"
+
+1: eval age;

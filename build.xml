@@ -1,0 +1,150 @@
+<project basedir="." default="generate" name="expert">
+	<property name="src.dir" value="src"/>
+	<property name="bin.dir" value="bin"/>
+	
+	
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.4"/>
+	<property name="source" value="1.4"/>
+	
+	<property name="grammar.dir" value="by/bsuir/iit/kp/expert/parsers/gen"/>
+	
+	<property name="grammar.file" value=""/>
+	
+	<!--taskdef resource="net/sf/antcontrib/antlib.xml"/-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	  <classpath>
+	    <pathelement location="ant-contrib-1.0b3.jar"/>
+	  </classpath>
+	</taskdef>
+	
+    <path id="expert.classpath">
+        <pathelement location="${bin.dir}"/>
+        <pathelement location="antlr.jar"/>
+		<pathelement location="junit.jar"/>
+    </path>
+	
+    <target name="init">
+		<mkdir dir="${bin.dir}"/>
+	    <copy includeemptydirs="false" todir="${bin.dir}">
+	        <fileset dir="src" includes="**/*.properties"/>
+	    </copy>
+		<antcall target="generate"/>
+    </target>
+	
+	<target name="generate">
+		<property name="grammar.base" value=""/>
+		<foreach target="grammar" param="grammar.file" inheritall="true">
+			<path>
+				<pathelement location="${src.dir}/${grammar.dir}/ANTLRBaseModelParser.g"/>
+			</path>
+		</foreach>
+	
+		<var name="grammar.base" unset="true"/>
+		<property name="grammar.base" value="${src.dir}/${grammar.dir}/ANTLRBaseModelParser.g"/>
+		<foreach target="grammar" param="grammar.file" inheritall="true">
+			<path>
+				<fileset dir="${src.dir}/${grammar.dir}">
+					<include name="*.g"/>
+					<exclude name="expanded*.g"/>
+				    <exclude name="ANTLRBaseModelParser.g"/>
+					<exclude name="LogicalExpressionParser.g"/>
+				</fileset>
+			</path>	
+		</foreach>
+	
+		<!-- logical expression parser extends arithmetical expression parser -->
+		<var name="grammar.base" unset="true"/>
+		<property name="grammar.base"
+			value="${src.dir}/${grammar.dir}/ANTLRBaseModelParser.g;${src.dir}/${grammar.dir}/ArithmeticExpressionParser.g"/>
+		<foreach target="grammar" param="grammar.file" inheritall="true">
+			<path>
+				<fileset dir="${src.dir}/${grammar.dir}">
+					<include name="LogicalExpressionParser.g"/>
+				</fileset>
+			</path>	
+		</foreach>
+	
+		<delete>
+			<fileset dir="${src.dir}/${grammar.dir}">
+				<include name="*.smap"/>
+				<include name="expanded*.g"/>
+			</fileset>
+		</delete>
+	
+		<antcall target="dummy"/>
+	</target>
+	
+	<!--target name="grammar">
+		<echo>${grammar.file}</echo>
+		<antlr target="${grammar.file}" outputdirectory="${src.dir}/${grammar.dir}">
+			<classpath refid="expert.classpath"/>
+		</antlr>
+	</target-->
+	
+	<target name="grammar">
+		<echo>${grammar.file}</echo>
+		<if>
+			<equals arg1="${grammar.base}" arg2=""/>
+			<then>
+				<antlr target="${grammar.file}" outputdirectory="${src.dir}/${grammar.dir}">
+					<classpath refid="expert.classpath"/>
+				</antlr>
+			</then>
+			<else>
+				<echo>EXTENDS ${grammar.base}</echo>
+				<antlr target="${grammar.file}" glib="${grammar.base}" outputdirectory="${src.dir}/${grammar.dir}">
+					<classpath refid="expert.classpath"/>
+				</antlr>
+			</else>
+		</if>
+	</target>
+	
+    <target name="clean" depends="genclean">
+        <delete dir="${bin.dir}"/>
+    </target>
+	
+	<target name="genclean">
+		<delete>
+			<fileset dir="${src.dir}/${grammar.dir}">
+				<include name="*.txt"/>
+				<include name="*.java"/>
+				<include name="*.smap"/>
+				<include name="expanded*.g"/>
+			</fileset>
+		</delete>
+	
+		<touch>
+			<fileset dir="${src.dir}/${grammar.dir}">
+				<include name="*.g"/>
+			</fileset>
+		</touch>
+	
+		<antcall target="dummy"/>
+	</target>
+	
+	<target name="dummy" description="What a dummy file fucking antlr generates here for?">
+		<delete>
+			<fileset dir="">
+				<include name="*.txt"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="test">
+		<junit printsummary="on" fork="on">
+			<formatter type="plain"/>
+		    <classpath refid="expert.classpath"/>
+			<test name="by.bsuir.iit.kp.expert.test.AllTests" todir="tests"/>
+		</junit>
+	</target>
+	
+    <target depends="clean,init" name="build">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" source="${source}" target="${target}">
+            <src path="${src.dir}"/>
+            <classpath refid="expert.classpath"/>
+        </javac>
+		<antcall target="test"/>
+    </target>
+	
+</project>

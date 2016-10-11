@@ -1,0 +1,110 @@
+##############################################################################
+# Grammar test for syntax.
+# This file is syntatically and semantically right.
+# If your parser throws exceptions, than you must rewrite your parser... :)
+##############################################################################
+
+# 1. Number attribute constructions.
+
+# minimum
+number attribute numattr_min
+# maximum
+number attribute numattr_max "comment" from 10 to 20.0 default 15.2345
+
+
+number attribute n123m "comment for n123m"
+number	 attribute	 n123m_1	 "comment for n123m_1"
+number attribute
+
+	n123m_2
+
+	"comment for n123m_2"	from 10		# bla bla
+	to 20
+
+
+number attribute na_constr_from "'from' constrained attribute" from 10
+number attribute na_constr_to "'to' constrained attribute" to 20
+number attribute na_constr_both "constrained attribute" from 10 to 20
+
+number attribute na_constr_from_nocom from 10
+number attribute na_constr_to_nocom to 20
+number attribute na_constr_both_nocom from 10 to 20
+
+
+number attribute na_constr_def "attribute with default value" default 15
+number attribute na_constr_to_def "'to' constrained attribute with default value" to 20 default 15
+number attribute na_constr_from_def "'from' constrained attribute with default value" from 10 default 15
+number attribute na_constr_both_def "constrained attribute with default value" from 10 to 20 default 15
+
+number attribute na_constr_def_nocom default 15
+number attribute na_constr_to_def_nocom to 20 default 15
+number attribute na_constr_from_def_nocom from 10 default 15
+number attribute na_constr_both_def_nocom from 10 to 20 default 15
+
+
+# real world example
+number attribute age "age of employee" from 10 to 90 default 25
+
+
+
+# 2. Symbol attribute constructions.
+
+# minumum
+symbol attribute symbattr_min value symb_min
+# maximum
+symbol attribute symbattr_max "comment"
+	value symb_max_1 "comment"
+	value symb_max_2 "comment" assertion name symb_max_2_assert
+	value symb_max_3 "comment" assertion name symb_max_3_assert default 0.5
+	
+symbol attribute symbattr_1 "comment"
+
+	value symb_attr_11 "comment" assertion name symb_attr_11_assert
+	value symb_attr_12 "comment" default 0.5
+
+	value symb_attr_13 assertion name symb_attr_13_assert
+	value symb_attr_14 assertion name symb_attr_14_assert default 0.5
+	
+	value symb_attr_15 default 0.5
+
+# real world example
+symbol attribute gender "employee's gender"
+	value male "male employee" assertion name gm
+	value female "female employee" assertion name gf
+
+# 3. Rules constructions.
+# Although rule ids are prefixed, parser make no assumptions about type of rule, and, as result, rule action is just a QUOTED_STRING.
+# System at runtime will check for prefixes and load corresponding action handlers. So, if action is correct or no, we cannot test.
+# But examples are real and actions are also with real syntax and semantic.
+
+# mimimum
+rule Q_rule_min target numattr_min
+# maximum
+rule Q_rule_max target numattr_max if numattr_min > 30 "action"
+
+# note long id
+rule Q_rule_1 target [symbattr_min.symb_min]
+# testing logical expressions
+rule L_rule_1 target symb_max_2_assert if (numattr_min + 10 > 20 & (numattr_max <= 30 | numattr_max != 50.9) & numattr_min = 30 & ![symbattr_min.symb_min]) "0.5"
+# testing arithmetical expressions
+rule N_rule_1 target symb_max_3_assert if 1 + cos(+ 20 + 30 / ( - 25 - 10 * sin(30.112))) + numattr_min / -numattr_max + ln([symbattr_min.symb_min]) > 20 "1 + cos(+ 20 + 30 / ( - 25 - 10 * sin(30.112))) + numattr_min / -numattr_max + ln([symbattr_min.symb_min])"
+
+# real world example
+rule Q_age target age "Enter employee's age:"
+rule A_gender target gender "Choose employee's gender:"
+
+# 4. Scenario constructions.
+
+# mimimum
+1: eval numattr_min;
+# maximum
+2: print "printll", 0.0, numattr_min, [symbattr_min.symb_min] if numattr_min > 30;
+3: goto 4;	# comment
+4: call 8;
+5: reset;
+6: reset numattr_min, [symbattr_min.symb_min];
+7: stop;
+8: return;
+
+# real world example
+10: eval age;
